@@ -1,0 +1,145 @@
+/* Hero */
+.lm-hero {
+    width: 100%;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: block;
+}
+    
+/* Tarjeta */
+.lm-card-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: -100px;
+    padding: 0 20px 80px;
+    position: relative;
+    z-index: 10;
+}
+    
+.lm-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0, 36, 111, 0.08);
+    width: 100%;
+    max-width: 630px;
+    padding: 50px 70px 60px;
+    border: 1px solid #D6E4FF;
+}
+    
+/* Título */
+.lm-titulo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #00246F;
+    text-align: center;
+    margin: 0 0 40px;
+    line-height: 1.3;
+}
+    
+/* Campos */
+.lm-field {
+    margin-bottom: 28px;
+}
+    
+.lm-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 400;
+    color: #00246F;
+    margin-bottom: 10px;
+}
+    
+.lm-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1.5px solid #386AF1;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #002B82 !important;
+    background: #ffffff !important;
+    outline: none;
+    box-shadow: none !important;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    font-family: inherit;
+    -webkit-text-fill-color: #002B82;
+}
+
+.lm-input:focus { border-color: #00246F; }
+.lm-input::placeholder { color: #A0AABF; }
+
+/* Error */
+.lm-error {
+    background: #fff1f1;
+    border: 1px solid #fca5a5;
+    border-radius: 8px;
+    color: #dc2626;
+    font-size: 14px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+    
+/* Botón */
+.lm-btn-wrap {
+    margin-top: 36px;
+    text-align: center;
+}
+    
+.lm-btn {
+    display: inline-block;
+    padding: 14px 80px;
+    border: 1.5px solid #386AF1;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #386AF1;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+}
+
+.lm-btn:hover    { 
+    background: #386AF1; 
+    color: #ffffff; 
+}
+.lm-btn:disabled { 
+    opacity: 0.65; 
+    cursor: not-allowed; 
+}
+
+/*  toggle ojito contraseña  */
+
+.lm-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.lm-input-wrap .lm-input {
+    width: 100%;
+    padding-right: 48px;
+    box-sizing: border-box;
+}
+
+.lm-eye {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #A0AABF;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.lm-eye:hover { color: #386AF1; }

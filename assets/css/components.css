@@ -1,0 +1,57 @@
+.card{
+    border-radius: 10px;
+    border: 1px solid #D9D9D9;
+}
+
+.accordion {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.accordion-item {
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+.accordion-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2d2d2d;
+    background: #fff;
+    cursor: pointer;
+}
+
+.accordion-content {
+    display: none;
+    padding: 1rem;
+    background: #f8f9ff;
+}
+
+.btn-ingresar {
+    display: inline-block;
+    padding: 0.5rem 2rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1.5px solid #4f6ef7;
+    color: #4f6ef7;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    min-width: 200px;
+}
+
+.btn-ingresar:hover {
+    background: #4f6ef7;
+    color: #fff;
+}
