@@ -169,7 +169,7 @@ foreach ($usuarios as $t) {
                         $user->ID, $course_id
                     ));
 
-                    if ($cert) {
+                    if ($cert && $progress >= 100) {
                         $url_cert = add_query_arg([
                             'mass_cert_pdf' => 1,
                             'curso'         => $course_id,
