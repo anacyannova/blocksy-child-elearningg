@@ -31,11 +31,25 @@ $usuarios = get_users([
 
 $total = $activos = $certificados = 0;
 
+$user_ids = wp_list_pluck($usuarios, 'ID');
+
+// Contar certificados reales desde la BD
+$certs_emitidos = [];
+if (!empty($user_ids)) {
+    $placeholders = implode(',', array_fill(0, count($user_ids), '%d'));
+    $certs_emitidos = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT DISTINCT user_id FROM {$wpdb->prefix}mass_certificados WHERE user_id IN ($placeholders)",
+            ...$user_ids
+        )
+    );
+}
+
 foreach ($usuarios as $t) {
     $total++;
     $est = strtolower(trim(get_field('estado', 'user_' . $t->ID)));
     if ($est === 'activo') $activos++;
-    if (!empty(get_user_meta($t->ID, 'certificado_aprobado', true))) $certificados++;
+    if (in_array($t->ID, $certs_emitidos)) $certificados++;
 }
 ?>
 
@@ -116,7 +130,6 @@ foreach ($usuarios as $t) {
                 $cargo = get_field('rol', 'user_' . $user->ID);
                 $rut   = get_field('rut', 'user_' . $user->ID);
 
-                // Progreso desde tablas propias
                 $progress  = 0;
                 $cert_html = '<span class="pe-sin-cert">Sin certificado</span>';
 
@@ -150,9 +163,20 @@ foreach ($usuarios as $t) {
 
                     $progress = $total_lecciones > 0 ? round(($completadas / $total_lecciones) * 100) : 0;
 
-                    $cert_url = get_user_meta($user->ID, 'certificado_url', true);
-                    if ($progress >= 100 && !empty($cert_url)) {
-                        $cert_html = '<a class="pe-cert-link" href="' . esc_url($cert_url) . '" target="_blank">Descargar</a>';
+                    // Buscar certificado en la tabla real
+                    $cert = $wpdb->get_row($wpdb->prepare(
+                        "SELECT * FROM {$wpdb->prefix}mass_certificados WHERE user_id = %d AND curso_id = %d",
+                        $user->ID, $course_id
+                    ));
+
+                    if ($cert) {
+                        $url_cert = add_query_arg([
+                            'mass_cert_pdf' => 1,
+                            'curso'         => $course_id,
+                            'uid'           => $user->ID,
+                            'token'         => mass_token_certificado($user->ID, $course_id),
+                        ], home_url('/'));
+                        $cert_html = '<a class="pe-cert-link" href="' . esc_url($url_cert) . '" target="_blank">Descargar</a>';
                     }
                 }
 
