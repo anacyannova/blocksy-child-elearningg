@@ -16,7 +16,6 @@ function mass_actualizar_tabla_certificados() {
     global $wpdb;
     $charset = $wpdb->get_charset_collate();
 
-    // Recrear con columna codigo si no existe
     $sql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}mass_certificados (
         id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id     BIGINT UNSIGNED NOT NULL,
@@ -29,14 +28,12 @@ function mass_actualizar_tabla_certificados() {
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
     dbDelta($sql);
 
-    // Agregar columna codigo si la tabla ya existía sin ella
     $col = $wpdb->get_results("SHOW COLUMNS FROM {$wpdb->prefix}mass_certificados LIKE 'codigo'");
     if (empty($col)) {
         $wpdb->query("ALTER TABLE {$wpdb->prefix}mass_certificados ADD COLUMN codigo VARCHAR(20) NOT NULL DEFAULT ''");
     }
 }
 
-// También intentar al cargar (para sitios donde el tema ya estaba activo)
 add_action('init', function() {
     global $wpdb;
     $col = $wpdb->get_results("SHOW COLUMNS FROM {$wpdb->prefix}mass_certificados LIKE 'codigo'");
@@ -50,7 +47,6 @@ add_action('init', function() {
    2. GENERAR CÓDIGO ÚNICO
 ─────────────────────────────── */
 function mass_generar_codigo_certificado($user_id, $curso_id) {
-    // Formato: MASS-XXXX-XXXX (alfanumérico mayúscula)
     $base   = strtoupper(substr(md5($user_id . '-' . $curso_id . '-' . time()), 0, 8));
     $codigo = 'MASS-' . substr($base, 0, 4) . '-' . substr($base, 4, 4);
     return $codigo;
@@ -59,20 +55,17 @@ function mass_generar_codigo_certificado($user_id, $curso_id) {
 
 /* ─────────────────────────────
    3. REGISTRAR CERTIFICADO
-   (llamado desde cursos-ajax.php
-   cuando progreso = 100%)
 ─────────────────────────────── */
 function mass_emitir_certificado($user_id, $curso_id) {
     global $wpdb;
     $tabla = $wpdb->prefix . 'mass_certificados';
 
-    // ¿Ya tiene certificado?
     $existe = $wpdb->get_row($wpdb->prepare(
         "SELECT * FROM $tabla WHERE user_id = %d AND curso_id = %d",
         $user_id, $curso_id
     ));
 
-    if ($existe) return $existe->codigo; // ya emitido, devolver código
+    if ($existe) return $existe->codigo;
 
     $codigo = mass_generar_codigo_certificado($user_id, $curso_id);
 
@@ -86,13 +79,6 @@ function mass_emitir_certificado($user_id, $curso_id) {
     return $codigo;
 }
 
-
-/* ─────────────────────────────
-   4. REEMPLAZAR wpdb->replace
-   en cursos-ajax.php para que
-   use nuestra función
-─────────────────────────────── */
-// Hook que se dispara al completar lección (100%)
 add_action('mass_curso_completado', function($user_id, $curso_id) {
     mass_emitir_certificado($user_id, $curso_id);
 }, 10, 2);
@@ -100,7 +86,6 @@ add_action('mass_curso_completado', function($user_id, $curso_id) {
 
 /* ─────────────────────────────
    5. SHORTCODE [mass_certificado]
-   Para usar en una página WordPress
 ─────────────────────────────── */
 add_shortcode('mass_certificado', 'mass_shortcode_certificado');
 function mass_shortcode_certificado($atts) {
@@ -122,7 +107,6 @@ function mass_shortcode_certificado($atts) {
     ));
 
     if (!$cert) {
-        // Intentar emitir si el curso está realmente completado
         $total = (int) $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$wpdb->posts} p
              JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
@@ -152,7 +136,6 @@ function mass_shortcode_certificado($atts) {
         }
     }
 
-    // Asegurar que tiene código (certificados viejos sin código)
     if (empty($cert->codigo)) {
         $codigo = mass_generar_codigo_certificado($cert->user_id, $cert->curso_id);
         $wpdb->update(
@@ -191,40 +174,27 @@ function mass_shortcode_certificado($atts) {
             </a>
         </div>
 
-        <!-- CERTIFICADO VISUAL -->
         <div class="mass-cert" id="massCert">
             <div class="mass-cert__border">
 
                 <div class="mass-cert__logo">
-                    <?php
-                    $logo = get_option('mass_cert_logo', '');
+                    <?php $logo = get_option('mass_cert_logo', '');
                     if ($logo): ?>
                         <img src="<?php echo esc_url($logo); ?>" alt="Logo">
-                    <?php else:
-                        $logo_tema = get_stylesheet_directory_uri() . '/assets/img/mass-logo-1.png';
-                    ?>
+                    <?php else: ?>
                         <img src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/img/mass-logo-1.png'); ?>" alt="MASS">
                     <?php endif; ?>
                 </div>
 
                 <p class="mass-cert__pretitulo">CERTIFICADO DE PARTICIPACIÓN</p>
-
                 <h1 class="mass-cert__presenta">Se certifica que</h1>
-
                 <h2 class="mass-cert__nombre"><?php echo esc_html($nombre); ?></h2>
-
-                <p class="mass-cert__texto">
-                    ha completado satisfactoriamente el curso
-                </p>
-
+                <p class="mass-cert__texto">ha completado satisfactoriamente el curso</p>
                 <h3 class="mass-cert__curso"><?php echo esc_html($titulo); ?></h3>
-
-                <p class="mass-cert__fecha">
-                    Emitido el <?php echo esc_html($fecha); ?>
-                </p>
+                <p class="mass-cert__fecha">Emitido el <?php echo esc_html($fecha); ?></p>
 
                 <?php
-                $firma_url  = get_option('mass_cert_firma', '');
+                $firma_url    = get_option('mass_cert_firma', '');
                 $firma_nombre = get_option('mass_cert_firma_nombre', '');
                 $firma_cargo  = get_option('mass_cert_firma_cargo', '');
                 if ($firma_url || $firma_nombre): ?>
@@ -270,8 +240,7 @@ function mass_verificar_token_certificado($user_id, $curso_id, $token) {
 
 
 /* ─────────────────────────────
-   7. ENDPOINT PDF (sin librería)
-   Genera HTML imprimible
+   7. ENDPOINT PDF
 ─────────────────────────────── */
 add_action('template_redirect', 'mass_servir_certificado_pdf');
 function mass_servir_certificado_pdf() {
@@ -302,8 +271,6 @@ function mass_servir_certificado_pdf() {
 
     $firma_url    = get_option('mass_cert_firma', '');
     $firma_nombre = get_option('mass_cert_firma_nombre', '');
-
-    // RUT del alumno desde ACF
     $rut = function_exists('get_field') ? get_field('rut', 'user_' . $user_id) : '';
 
     header('Content-Type: text/html; charset=UTF-8');
@@ -328,6 +295,8 @@ function mass_servir_certificado_pdf() {
         }
 
         .pdf-actions {
+            display: flex;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
@@ -343,7 +312,10 @@ function mass_servir_certificado_pdf() {
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* ── CERTIFICADO ── */
+        .pdf-btn--download {
+            background: #386AF1;
+        }
+
         .cert {
             width: 960px;
             background: #f4f5f8;
@@ -351,7 +323,6 @@ function mass_servir_certificado_pdf() {
             box-shadow: 0 10px 50px rgba(0,0,0,0.18);
         }
 
-        /* Borde exterior azul marino */
         .cert__outer {
             border: 6px solid #1a3466;
             margin: 0;
@@ -359,7 +330,6 @@ function mass_servir_certificado_pdf() {
             position: relative;
         }
 
-        /* Borde interior */
         .cert__inner {
             border: 2px solid #1a3466;
             margin: 8px;
@@ -372,7 +342,6 @@ function mass_servir_certificado_pdf() {
             position: relative;
         }
 
-        /* Cinta / marcador arriba a la izquierda */
         .cert__ribbon {
             position: absolute;
             top: -6px;
@@ -384,7 +353,6 @@ function mass_servir_certificado_pdf() {
             z-index: 10;
         }
 
-        /* Escudo marca de agua */
         .cert__watermark {
             position: absolute;
             top: 50%;
@@ -396,7 +364,6 @@ function mass_servir_certificado_pdf() {
             pointer-events: none;
         }
 
-        /* ── TEXTOS ── */
         .cert__titulo {
             font-size: 52px;
             font-weight: 800;
@@ -487,7 +454,6 @@ function mass_servir_certificado_pdf() {
             z-index: 1;
         }
 
-        /* ── FIRMAS ── */
         .cert__firmas {
             display: flex;
             justify-content: space-between;
@@ -528,7 +494,6 @@ function mass_servir_certificado_pdf() {
             color: #555;
         }
 
-        /* ── PRINT ── */
         @media print {
             body { background: #fff; padding: 0; }
             .pdf-actions { display: none !important; }
@@ -540,18 +505,17 @@ function mass_servir_certificado_pdf() {
     <body>
 
     <div class="pdf-actions">
-        <button class="pdf-btn" onclick="window.print()">🖨 Imprimir / Guardar como PDF</button>
+        <button class="pdf-btn" onclick="window.print()">🖨 Imprimir</button>
+        <button class="pdf-btn pdf-btn--download" onclick="window.open(window.location.href + '&autoprint=1')">⬇ Descargar PDF</button>
     </div>
 
     <div class="cert">
         <div class="cert__outer">
 
-            <!-- Cinta decorativa arriba izquierda -->
             <div class="cert__ribbon"></div>
 
             <div class="cert__inner">
 
-                <!-- Escudo marca de agua -->
                 <svg class="cert__watermark" viewBox="0 0 100 115" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M50 2L95 20V55C95 80 75 102 50 113C25 102 5 80 5 55V20L50 2Z" fill="#1a3466"/>
                     <path d="M50 15L85 30V55C85 75 68 94 50 103C32 94 15 75 15 55V30L50 15Z" fill="none" stroke="#1a3466" stroke-width="2"/>
@@ -579,7 +543,6 @@ function mass_servir_certificado_pdf() {
                     su participación y aprobación de la capacitación.
                 </p>
 
-                <!-- Firmas -->
                 <div class="cert__firmas">
 
                     <div class="cert__firma-item">
@@ -614,7 +577,6 @@ function mass_servir_certificado_pdf() {
 
 /* ─────────────────────────────
    8. SHORTCODE [mass_verificar]
-   Página pública de verificación
 ─────────────────────────────── */
 add_shortcode('mass_verificar_certificado', 'mass_shortcode_verificar');
 function mass_shortcode_verificar($atts) {
@@ -679,8 +641,6 @@ function mass_shortcode_verificar($atts) {
 
 /* ─────────────────────────────
    9. BOTÓN EN MI PERFIL
-   Helper para mostrar botón
-   de descarga en page-miperfil
 ─────────────────────────────── */
 function mass_boton_certificado($user_id, $curso_id) {
     global $wpdb;
@@ -740,7 +700,6 @@ function mass_pagina_certificados() {
     $col_sec       = get_option('mass_cert_color_secundario', '#386AF1');
     $col_ace       = get_option('mass_cert_color_acento', '#D4AF37');
 
-    // Certificados emitidos
     global $wpdb;
     $certificados = $wpdb->get_results(
         "SELECT c.*, u.display_name, p.post_title
@@ -756,7 +715,6 @@ function mass_pagina_certificados() {
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:20px;">
 
-            <!-- FORMULARIO -->
             <div>
                 <form method="post">
                     <?php wp_nonce_field('mass_cert_settings'); ?>
@@ -822,7 +780,6 @@ function mass_pagina_certificados() {
                 </form>
             </div>
 
-            <!-- INSTRUCCIONES -->
             <div style="background:#f8f9ff;border:1px solid #d0d7ff;border-radius:8px;padding:24px;">
                 <h3 style="margin-top:0;color:#00246F;">📋 Instrucciones de instalación</h3>
 
@@ -834,21 +791,13 @@ function mass_pagina_certificados() {
                 Crea una página con slug <code>verificar-certificado</code><br>
                 Agrega: <code>[mass_verificar_certificado]</code></p>
 
-                <p><strong>3. Botón en Mi Perfil</strong><br>
-                En <code>page-miperfil.php</code>, dentro del loop de cursos,<br>
-                agrega donde quieras mostrar el botón:</p>
-                <code style="display:block;background:#fff;padding:8px;border-radius:4px;font-size:12px;margin-top:4px;">
-                    &lt;?php echo mass_boton_certificado($user_id, $course_id); ?&gt;
-                </code>
-
-                <p style="margin-top:16px;"><strong>4. Verificar BD</strong><br>
+                <p style="margin-top:16px;"><strong>3. Verificar BD</strong><br>
                 Si los certificados antiguos no tienen código, visita esta URL una vez:<br>
                 <code style="font-size:11px;"><?php echo esc_url(add_query_arg('mass_fix_codigos', '1', home_url('/'))); ?></code>
                 </p>
             </div>
         </div>
 
-        <!-- TABLA DE CERTIFICADOS EMITIDOS -->
         <h2 style="margin-top:40px;">Certificados emitidos</h2>
         <?php if (empty($certificados)): ?>
         <p>Aún no se han emitido certificados.</p>

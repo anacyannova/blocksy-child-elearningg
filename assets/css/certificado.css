@@ -32,7 +32,9 @@
     border: none;
     transition: opacity 0.2s, transform 0.15s;
 }
-
+.pdf-btn--download {
+    background: #386AF1;
+}
 .mass-cert-btn:hover {
     opacity: 0.85;
     transform: translateY(-1px);
