@@ -1,0 +1,380 @@
+/* ═══════════════════════════════════════════
+   CERTIFICADOS — MASS eLearning
+   assets/css/certificado.css
+   ═══════════════════════════════════════════ */
+
+/* ── Wrapper general ── */
+.mass-cert-wrap {
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ── Botones de acción ── */
+.mass-cert-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    justify-content: flex-end;
+}
+
+.mass-cert-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.mass-cert-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.mass-cert-btn--print {
+    background: #386AF1;
+    color: #fff;
+}
+
+.mass-cert-btn--download {
+    background: #00246F;
+    color: #fff;
+}
+
+/* ── Certificado visual ── */
+.mass-cert {
+    background: #fff;
+    border: 12px solid #00246F;
+    position: relative;
+    box-shadow: 0 10px 50px rgba(0, 36, 111, 0.15);
+    overflow: hidden;
+}
+
+.mass-cert__border {
+    border: 3px solid #D4AF37;
+    margin: 12px;
+    padding: 48px 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: 560px;
+    position: relative;
+}
+
+/* Esquinas decorativas */
+.mass-cert__border::before,
+.mass-cert__border::after {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-color: #D4AF37;
+    border-style: solid;
+    opacity: 0.6;
+}
+.mass-cert__border::before {
+    top: 6px; left: 6px;
+    border-width: 3px 0 0 3px;
+}
+.mass-cert__border::after {
+    bottom: 6px; right: 6px;
+    border-width: 0 3px 3px 0;
+}
+
+/* ── Logo ── */
+.mass-cert__logo {
+    margin-bottom: 28px;
+}
+
+.mass-cert__logo img {
+    height: 56px;
+    object-fit: contain;
+}
+
+/* ── Textos ── */
+.mass-cert__pretitulo {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #D4AF37;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.mass-cert__presenta {
+    font-size: 15px;
+    font-weight: 300;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.mass-cert__nombre {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: #00246F;
+    line-height: 1.1;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #D4AF37;
+    width: 100%;
+}
+
+.mass-cert__texto {
+    font-size: 14px;
+    color: #555;
+    font-weight: 300;
+    margin-bottom: 8px;
+}
+
+.mass-cert__curso {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #386AF1;
+    margin-bottom: 22px;
+    max-width: 580px;
+    line-height: 1.3;
+}
+
+.mass-cert__fecha {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 28px;
+}
+
+/* ── Firma ── */
+.mass-cert__firmas {
+    display: flex;
+    gap: 60px;
+    justify-content: center;
+    margin: 8px 0 26px;
+}
+
+.mass-cert__firma-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 150px;
+}
+
+.mass-cert__firma-img {
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 4px;
+}
+
+.mass-cert__firma-linea {
+    width: 100%;
+    height: 1px;
+    background: #333;
+    margin-bottom: 6px;
+}
+
+.mass-cert__firma-nombre {
+    font-size: 13px;
+    font-weight: 600;
+    color: #222;
+}
+
+.mass-cert__firma-cargo {
+    font-size: 11px;
+    color: #888;
+}
+
+/* ── Footer / código ── */
+.mass-cert__footer {
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid #eee;
+    width: 100%;
+}
+
+.mass-cert__codigo {
+    font-size: 11px;
+    color: #aaa;
+    letter-spacing: 1px;
+}
+
+.mass-cert__verify {
+    font-size: 10px;
+    color: #ccc;
+    margin-top: 3px;
+}
+
+/* ── Badge en Mi Perfil ── */
+.mass-cert-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: #00246F;
+    color: #fff !important;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    margin-top: 8px;
+}
+
+.mass-cert-badge:hover {
+    background: #386AF1;
+    color: #fff !important;
+}
+
+/* ── Verificador ── */
+.mass-verify-wrap {
+    max-width: 560px;
+    margin: 40px auto;
+    font-family: 'Inter', sans-serif;
+}
+
+.mass-verify-form label {
+    display: block;
+    font-weight: 600;
+    color: #00246F;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.mass-verify-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.mass-verify-input-group input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #d0d7ff;
+    border-radius: 8px;
+    font-size: 15px;
+    letter-spacing: 1px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.mass-verify-input-group input:focus {
+    border-color: #386AF1;
+}
+
+.mass-verify-input-group button {
+    padding: 12px 24px;
+    background: #00246F;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.mass-verify-input-group button:hover {
+    background: #386AF1;
+}
+
+.mass-verify {
+    margin-top: 30px;
+    padding: 28px 32px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.mass-verify__icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.mass-verify h3 {
+    font-size: 20px;
+    margin-bottom: 14px;
+}
+
+.mass-verify p {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+.mass-verify--ok {
+    background: #f0fff4;
+    border: 2px solid #00D118;
+}
+
+.mass-verify--ok h3 {
+    color: #00801a;
+}
+
+.mass-verify--error {
+    background: #fff5f5;
+    border: 2px solid #ff4444;
+}
+
+.mass-verify--error h3 {
+    color: #cc0000;
+}
+
+.mass-verify-back {
+    display: inline-block;
+    margin-top: 20px;
+    color: #386AF1;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.mass-verify-back:hover {
+    text-decoration: underline;
+}
+
+/* ── Panel Empresa: link descarga certificado ── */
+.pe-cert-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 14px;
+    background: #00246F;
+    color: #fff !important;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.pe-cert-link:hover {
+    background: #386AF1;
+    color: #fff !important;
+}
+
+.pe-sin-cert {
+    font-size: 12px;
+    color: #aaa;
+}
+@media print {
+    .mass-cert-actions,
+    header, footer,
+    .site-header, .site-footer,
+    nav, .wp-block-navigation {
+        display: none !important;
+    }
+
+    .mass-cert-wrap {
+        margin: 0;
+        padding: 0;
+    }
+
+    .mass-cert {
+        box-shadow: none;
+        border-color: #00246F;
+    }
+}

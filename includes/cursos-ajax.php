@@ -121,11 +121,17 @@ add_action('wp_ajax_mass_completar_leccion', function() {
         $progreso = $total > 0 ? round(($completadas / $total) * 100) : 0;
 
         if ($progreso >= 100) {
-            $wpdb->replace($wpdb->prefix . 'mass_certificados', array(
-                'user_id'  => $user_id,
-                'curso_id' => $curso_id,
-                'fecha'    => current_time('mysql'),
-            ));
+            // Emitir certificado con código único de verificación
+            if (function_exists('mass_emitir_certificado')) {
+                mass_emitir_certificado($user_id, $curso_id);
+            } else {
+                $wpdb->replace($wpdb->prefix . 'mass_certificados', array(
+                    'user_id'  => $user_id,
+                    'curso_id' => $curso_id,
+                    'fecha'    => current_time('mysql'),
+                ));
+            }
+            do_action('mass_curso_completado', $user_id, $curso_id);
         }
     }
 

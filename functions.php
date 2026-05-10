@@ -23,6 +23,9 @@ if (file_exists($includes_path . 'admin-cargos.php')) {
 if (file_exists($includes_path . 'metaboxes.php')) {
     require_once $includes_path . 'metaboxes.php';
 }
+if (file_exists($includes_path . 'certificados.php')) {
+    require_once $includes_path . 'certificados.php';
+}
 
 /* ─────────────────────────────
    2. ESTILOS BASE
