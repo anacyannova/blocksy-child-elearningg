@@ -171,12 +171,12 @@ foreach ($usuarios as $t) {
 
                     if ($cert && $progress >= 100) {
                         $url_cert = add_query_arg([
-                            'mass_cert_pdf' => 1,
-                            'curso'         => $course_id,
-                            'uid'           => $user->ID,
-                            'token'         => mass_token_certificado($user->ID, $course_id),
+                            'mass_cert_download' => 1,
+                            'curso'              => $course_id,
+                            'uid'                => $user->ID,
+                            'token'              => mass_token_certificado($user->ID, $course_id),
                         ], home_url('/'));
-                        $cert_html = '<a class="pe-cert-link" href="' . esc_url($url_cert) . '" target="_blank">Descargar</a>';
+                        $cert_html = '<a class="pe-cert-link" href="' . esc_url($url_cert) . '">Descargar</a>';
                     }
                 }
 
